@@ -1,6 +1,6 @@
 const { user } = require("../Database/users");
 const fetch = require("cross-fetch");
-const getset = async (req, res) => {
+const getset = async (req, res, mode) => {
     const username = req.params.username;
     const User = await user.findOne({ login: username });
 
@@ -18,6 +18,7 @@ const getset = async (req, res) => {
         let following = await fetch(`https://api.github.com/users/${username}/following`)
         let dt = await following.json()
 
+        // console.log(data);
 
        
                 const mutual = dat.filter((el)=>{
@@ -70,6 +71,10 @@ const getset = async (req, res) => {
                 updated_at: data.updated_at,
                 friends:friends
             })
+            data["friends"] = friends;
+            if(mode === "mutual"){
+                return res.status(200).send(data.friends);
+            }
             return res.status(200).send(data);
         }
         catch (err) {
@@ -81,11 +86,15 @@ const getset = async (req, res) => {
 
 }
 
-const mutualfriends = (req, res) => {
-    const username = req.username;
-
-    // fetch(``)
-    res.status(200).send("Hello world");
+const mutualfriends = async(req, res,) => {
+    const username = req.params.username;
+    const User = await user.findOne({ login: username });
+    if(!User){
+        getset(req,res,"mutual");
+    }
+    else{
+        res.status(200).send(User.friends);
+    }
 }
 
 module.exports = {
