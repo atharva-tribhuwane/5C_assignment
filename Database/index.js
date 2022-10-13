@@ -1,4 +1,3 @@
-const { rejects } = require("assert");
 const mongoose = require("mongoose");
 const ConnectDatabase = ()=>{
     return new Promise((resolve,reject)=>{
