@@ -86,7 +86,7 @@ const getset = async (req, res, mode) => {
 
 }
 
-const mutualfriends = async(req, res,) => {
+const mutualfriends = async(req, res) => {
     const username = req.params.username;
     const User = await user.findOne({ login: username });
     if(!User){
@@ -97,7 +97,44 @@ const mutualfriends = async(req, res,) => {
     }
 }
 
+const getAllUsers = async(req,res)=>{
+    const Data = await user.find();
+    res.status(200).send(Data);
+}
+
+
+const userbynameloc = async(req,res)=>{
+        let {username,location} = req.query;
+        if(username==undefined && location==undefined){
+            res.status(400).send("Not Enough Data Provided");
+        }
+        else if(username==undefined){
+            const Data = await user.find({location:{$regex : `${location}`}});
+            if(Data.length < 1){
+                res.status(400).send("No Users with this location exist");
+            }
+            res.status(200).send(Data);
+
+        }
+        else if(location==undefined){
+            // "username" : /.*son.*/i
+            const User = await user.find({login:{$regex : `${username}`}});
+            if(!User){
+                res.status(400).send("Username Does not exist in Database");
+            }
+            res.status(200).send(User);
+        }
+        else if(username!=undefined && location!=undefined){
+            const Data = await user.find({username:{$regex : `${username}`},location:{$regex : `${location}`}});
+            if(Data.length < 1){
+                res.status(400).send("No Users with this location exist");
+            }
+            res.status(200).send(Data);
+        }
+}
 module.exports = {
     getset,
-    mutualfriends
+    mutualfriends,
+    getAllUsers,
+    userbynameloc
 }
