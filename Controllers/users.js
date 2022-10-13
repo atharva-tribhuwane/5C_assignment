@@ -8,30 +8,6 @@ const getset = async (req, res) => {
         res.status(200).send(User);
     }
     else {
-        // let resp;
-        // let followers;
-        // let following;
-        // fetch(`https://api.github.com/users/${username}`)
-        //     .then((response) => response.json())
-        //     .then(async (response) => {
-        //         resp = response;
-        //         fetch(`https://api.github.com/users/${username}/followers`)
-        //             .then((respo) => respo.json())
-        //             .then((respo) => {
-        //                 followers = respo
-        //             })
-        //         fetch(`https://api.github.com/users/${username}/following`)
-        //             .then((respon) => respon.json())
-        //             .then((respon) => {
-        //                 following = respon;
-
-        //             })
-
-
-        //     })
-
-
-        // console.log(resp);
         let friends = [];
         let resp = await fetch(`https://api.github.com/users/${username}`);
         let data = await resp.json();
