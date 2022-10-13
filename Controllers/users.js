@@ -8,55 +8,111 @@ const getset = async (req, res) => {
         res.status(200).send(User);
     }
     else {
-        fetch(`https://api.github.com/users/${username}`)
-            .then((response) => response.json())
-            .then(async (response) => {
-                // console.log(response);
-                try {
-                    await user.create({
-                        login: response.login,
-                        id: response.id,
-                        node_id: response.node_id,
-                        avatar_url: response.avatar_url,
-                        gravatar_id: response.gravatar_id,
-                        url:response.url,
-                        html_url:response.html_url,
-                        followers_url: response.followers_url,
-                        following_url: response.following_url,
-                        gists_url: response.gists_url,
-                        starred_url: response.starred_url,
-                        subscriptions_url: response.subscriptions_url,
-                        organizations_url: response.organizations_url,
-                        repos_url: response.repos_url,
-                        events_url: response.events_url,
-                        received_events_url: response.received_events_url,
-                        type: response.type,
-                        site_admin: response.site_admin,
-                        name: response.name,
-                        blog: response.blog,
-                        location: response.location,
-                        email:response.email,
-                        hireable: response.hireable,
-                        bio: response.bio,
-                        twitter_username: response.twitter_username,
-                        public_repos: response.public_repos,
-                        public_gists: response.public_gists,
-                        followers: response.followers,
-                        following: response.following,
-                        created_at: response.created_at,
-                        updated_at: response.updated_at
+        // let resp;
+        // let followers;
+        // let following;
+        // fetch(`https://api.github.com/users/${username}`)
+        //     .then((response) => response.json())
+        //     .then(async (response) => {
+        //         resp = response;
+        //         fetch(`https://api.github.com/users/${username}/followers`)
+        //             .then((respo) => respo.json())
+        //             .then((respo) => {
+        //                 followers = respo
+        //             })
+        //         fetch(`https://api.github.com/users/${username}/following`)
+        //             .then((respon) => respon.json())
+        //             .then((respon) => {
+        //                 following = respon;
+
+        //             })
+
+
+        //     })
+
+
+        // console.log(resp);
+        let friends = [];
+        let resp = await fetch(`https://api.github.com/users/${username}`);
+        let data = await resp.json();
+
+        let followers = await fetch(`https://api.github.com/users/${username}/followers`)
+        let dat = await followers.json();
+
+        let following = await fetch(`https://api.github.com/users/${username}/following`)
+        let dt = await following.json()
+
+
+       
+                const mutual = dat.filter((el)=>{
+                    return dt.some((ele2)=>{
+                        return el.login !== ele2.login;
                     })
-                    return res.status(200).send(response);
+                })
+
+            mutual.forEach((el)=>{
+                let payLoad = {
+                    login:el.login,
+                    url:el.url,
+                    repos:el.repos_url
                 }
-                catch (err) {
-                    return res.status(500).send("Internal server error");
-                }
+                friends.push(payLoad);
             })
+
+        try {
+            await user.create({
+                login: data.login,
+                id: data.id,
+                node_id: data.node_id,
+                avatar_url: data.avatar_url,
+                gravatar_id: data.gravatar_id,
+                url:data.url,
+                html_url:data.html_url,
+                followers_url: data.followers_url,
+                following_url: data.following_url,
+                gists_url: data.gists_url,
+                starred_url: data.starred_url,
+                subscriptions_url: data.subscriptions_url,
+                organizations_url: data.organizations_url,
+                repos_url: data.repos_url,
+                events_url: data.events_url,
+                received_events_url: data.received_events_url,
+                type: data.type,
+                site_admin: data.site_admin,
+                name: data.name,
+                blog: data.blog,
+                location: data.location,
+                email:data.email,
+                hireable: data.hireable,
+                bio: data.bio,
+                twitter_username: data.twitter_username,
+                public_repos: data.public_repos,
+                public_gists: data.public_gists,
+                followers: data.followers,
+                following: data.following,
+                created_at: data.created_at,
+                updated_at: data.updated_at,
+                friends:friends
+            })
+            return res.status(200).send(data);
+        }
+        catch (err) {
+            console.log(err);
+            return res.status(500).send("internal server error");
+        }
 
     }
 
 }
 
+const mutualfriends = (req, res) => {
+    const username = req.username;
+
+    // fetch(``)
+    res.status(200).send("Hello world");
+}
+
 module.exports = {
-    getset
+    getset,
+    mutualfriends
 }

@@ -3,7 +3,7 @@ const app = express();
 const cors = require("cors");
 const port = 3000;
 const { ConnectDatabase } = require("./Database/index");
-const {getset} = require("./Controllers/users");
+const {getset, mutualfriends} = require("./Controllers/users");
 // app.use(cors);
 app.use(express.json());
 
@@ -14,6 +14,7 @@ app.get("/", (req, res) => {
 
 app.get("/search/:username",getset);
 
+app.get("/mutual/:username",mutualfriends);
 
 ConnectDatabase().then(() => {
     app.listen(port, (err) => {

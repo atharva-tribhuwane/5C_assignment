@@ -34,6 +34,7 @@ const UserSchema = new Schema({
         following: Number,
         created_at: String,
         updated_at: String,
+        friends:Array,
 });
 
 const user = model("user",UserSchema);
